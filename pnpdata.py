@@ -47,13 +47,21 @@ def receive_data_from_stm32(ser):
                 continue
 
 ser = serial.Serial(
-    port='COM75',  # Replace with your COM port
+    port='COM80',  # Replace with your COM port
     baudrate=9600,
     timeout=1
 )
-data1='bottom'
+data1='LoadData'
 send_data_to_stm32(ser, data1)
-time.sleep(2)
+# Wait for the STM32 to send back "LoadData"
+while True:
+    response = receive_data_from_stm32(ser)
+    if response == 'LoadData':
+        print("STM32 acknowledged LoadData")
+        break
+    else:
+        print("Waiting for STM32 to acknowledge LoadData...")
+    time.sleep(1)
 # Iterate over the part_data dictionary and send data
 part_ids = list(part_data.keys())
 for idx, part_id in enumerate(part_ids):
